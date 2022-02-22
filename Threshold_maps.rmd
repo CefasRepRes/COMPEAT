@@ -6,7 +6,10 @@ output: html_document
 ---
 
 ```{r setup, include=FALSE}
-library(leaflet, viridis, sf, rgeos)
+library(leaflet)
+library(sf)
+library(viridis)
+library(leafsync)
 knitr::opts_chunk$set(echo = FALSE, warning = FALSE, message = FALSE)
 ```
 
@@ -35,14 +38,12 @@ At the same time new "ecologically coherent" assessment areas were developed (mo
 Assessment thresholds were averaged for each assessment area.
 
 ```{r assessment areas}
-COMP4_areas <- sf::st_read("https://raw.githubusercontent.com/ices-tools-dev/COMPEAT/master/assessment_areas/COMP4_assessment_areas.csv") %>%
+COMP4_areas <- sf::st_read("https://raw.githubusercontent.com/ices-tools-dev/COMPEAT/master/assessment_areas/COMP4_assessment_areas.csv",quiet = T) %>%
   st_set_crs(4326)
-centers <- data.frame(gCentroid(COMP4_areas, byid = TRUE))
-centers$region <- row.names(UK)
 #Map of new assessment areas
 leaflet(COMP4_areas) %>%
   addTiles() %>%
-  addPolygons(color = "black", fillOpacity = 0, weight = 1, label = ~COMP4_areas$ID, popup = COMP4_areas$Area_Name_) %>%
+  addPolygons(color = "black", fillOpacity = 0, weight = 1, label = ~COMP4_areas$ID, popup = COMP4_areas$Area_Name_) %>% # popups not quite working properly
   setView(-0,55,zoom = 5)
 
 ```
@@ -54,9 +55,44 @@ The work on thresholds has been further developed by ICG-EMO, using x models....
 HS1 and HS2 scenarios
 
 ```{r new thresholds}
+#Thresholds
+
+thres <- read.table("C:/Users/KC05/OneDrive - CEFAS/Shiny_apps/COMP_data/COMP_data_shiny/data/Thresholds_ICGEMO_Jan2022.csv", header = T, sep = ",")
+
+#merge thresholds onto COMP4_areas
+
+COMP4_areas <- merge(COMP4_areas,thres,by="ID")
+COMP4_areas <- sf:::as_Spatial(st_zm(COMP4_areas))
+
+#Chl - might want to show 90th percentile too?
+
+pal <- colorNumeric(palette = viridis(255), domain = c(0,20), na.color = "#00000000")
+m1 <- leaflet(COMP4_areas) %>%
+  addTiles() %>%
+  addPolygons(fillColor = ~pal(Chla) ,color = "black", fillOpacity = 1, weight = 1, popup = paste0(COMP4_areas$Area_Name_, "<br>","Chlorophyll", " theshold: ", as.character(round(COMP4_areas$Chla,2)), " (HS1).")) %>%
+  addLegend(pal = pal, values = c(0,20), title = "Chlorophyll (ug/l)") %>%
+  setView(3,54, zoom = 4)
+
 #DIN
-#Chl
-#Doxy
+
+pal <- colorNumeric(palette = viridis(255), domain = c(0,30), na.color = "#00000000")
+m2 <- leaflet(COMP4_areas) %>%
+  addTiles() %>%
+  addPolygons(fillColor = ~pal(DIN) ,color = "black", fillOpacity = 1, weight = 1, popup = paste0(COMP4_areas$Area_Name_, "<br>","Chlorophyll", " theshold: ", as.character(round(COMP4_areas$DIN,2)), " (HS1)")) %>%
+  addLegend(pal = pal, values = c(0,30), title = "DIN (uM)") %>%
+  setView(3,54, zoom = 4)
+
+#DIP
+
+pal <- colorNumeric(palette = viridis(255), domain = c(0,3), na.color = "#00000000")
+m3 <- leaflet(COMP4_areas) %>%
+  addTiles() %>%
+  addPolygons(fillColor = ~pal(DIP) ,color = "black", fillOpacity = 1, weight = 1, popup = paste0(COMP4_areas$Area_Name_, "<br>","Chlorophyll", " theshold: ", as.character(round(COMP4_areas$DIP,2)), " (HS1)")) %>%
+  addLegend(pal = pal, values = c(0,3), title = "DIP (uM)") %>%
+  setView(3,54, zoom = 4)
+sync(m1, m2, m3, ncol = 3, sync.cursor = F)
+
+#Doxy - Don't need map, it is 6 mg/l everywhere.
 
 ```
 
