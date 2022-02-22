@@ -1,0 +1,59 @@
+---
+title: "Eutrophication threshold maps"
+author: "Kate Collingridge and Liam Fernand"
+date: "22/02/2022"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+library(leaflet, viridis)
+knitr::opts_chunk$set(echo = FALSE, warning = FALSE, message = FALSE)
+```
+
+This document presents the new proposed eutrophication assessment thresholds for UK assessment areas for consideration by the Eutrophication Steering Group. For more detail on how the threshold and assessment areas were developed see the ICG-EMO report and OSPAR COMP Annexes (3 and 7)
+
+## Previous thresholds
+
+For the previous comprehensive eutrophication assessment thresholds were the same for all assessment areas and only dependent on salinity with a different threshold for "coastal" and "offshore" waters.
+
+
+```{r old thresholds}
+#Map of old assessment thresholds.
+#DIN. toggle for coastal/offshore
+#Chl
+#Doxy
+
+```
+
+## Eunosat
+
+During the eunosat project a different approach for determining thresholds was developed. "Reference conditions" for nutrients and chlorophyll were modelled for the year 1900 and 50% was added to these to form the assessment thresholds. This was based on xxx model at Deltares.
+
+### Assessment areas
+
+At the same time new "ecologically coherent" assessment areas were developed (more detail, or just ref eunosat report). These have been further modified to incorporate river plumes (e.g. Thames, Humber and Liverpool Bay) and additional assessment areas in places not covered during the EUNOSAT project.
+Assessment thresholds were averaged for each assessment area.
+
+```{r assessment areas}
+#Map of new assessment areas
+```
+
+## ICG-EMO
+
+The work on thresholds has been further developed by ICG-EMO, using x models.... Liam to expand.
+
+HS1 and HS2 scenarios
+
+```{r new thresholds}
+#DIN
+#Chl
+#Doxy
+
+```
+
+Any points of discussion.
+Comparison of old and new thresholds
+
+## WFD thresholds
+
+Map of these? How does this affect them?
