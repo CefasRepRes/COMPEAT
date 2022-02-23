@@ -10,6 +10,7 @@ library(leaflet)
 library(sf)
 library(viridis)
 library(leafsync)
+library(rgdal)
 knitr::opts_chunk$set(echo = FALSE, warning = FALSE, message = FALSE)
 ```
 
@@ -22,6 +23,12 @@ For the previous comprehensive eutrophication assessment thresholds were the sam
 
 ```{r old thresholds}
 #Map of old assessment thresholds.
+COMP3_areas <- readOGR(dsn = "C:/Users/KC05/OneDrive - CEFAS/Shiny_apps/COMP_data/COMP_data_shiny/data", layer = "CP2_WGS84", verbose = T)
+
+leaflet(COMP3_areas) %>%
+  addTiles() %>%
+  addPolygons(color = "black", fillOpacity = 0, weight = 1, label = COMP3_areas$CP2_Region) %>% # popups not quite working properly
+  setView(-0,55,zoom = 5)
 #DIN. toggle for coastal/offshore
 #Chl
 #Doxy
