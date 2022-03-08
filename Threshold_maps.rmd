@@ -11,27 +11,43 @@ library(sf)
 library(viridis)
 library(leafsync)
 library(rgdal)
+library(knitr)
 knitr::opts_chunk$set(echo = FALSE, warning = FALSE, message = FALSE)
 ```
 
-This document presents the new proposed eutrophication assessment thresholds for UK assessment areas for consideration by the Eutrophication Steering Group. For more detail on how the threshold and assessment areas were developed see the ICG-EMO report and OSPAR COMP Annexes (3 and 7)
+This document presents the new proposed methods for the COMP4 OSPAR eutrophication assessment, including thresholds for UK assessment areas for consideration by the Eutrophication Steering Group. For more detail on how the thresholds and assessment areas were developed see the ICG-EMO report and OSPAR COMP Annexes (3 and 7).
 
-## Previous thresholds
+### COMP3 thresholds
 
-For the previous comprehensive eutrophication assessment thresholds were the same for all assessment areas and only dependent on salinity with a different threshold for "coastal" and "offshore" waters.
+For the previous UK comprehensive eutrophication assessment (COMP3) thresholds were the same for all assessment areas and only dependent on salinity with a different threshold for "coastal" and "offshore" waters.
+[comment]: # (Maybe add something about the assessment statistics too?)
+
 
 
 ```{r old thresholds}
-#Map of old assessment thresholds.
-COMP3_areas <- readOGR(dsn = "C:/Users/KC05/OneDrive - CEFAS/Shiny_apps/COMP_data/COMP_data_shiny/data", layer = "CP2_WGS84", verbose = T)
+#old assessment thresholds.
 
+thres_COMP3 <- data.frame(Variable = c("DIN", "CPHL", "DOXY"),
+                          Coastal_threshold = c(18, 15, 6),
+                          Offshore_threshold  = c(15, 10, 6),
+                          Metric = c("Mean", "90th percentile", "Mean of lowest quartile in bottom waters"))
+kable(thres_COMP3)
+```
+
+### COMP3 Assessment areas
+
+For COMP3 there were 8 assessment areas, as in Charting Progress 2. Each country used their own assessment areas with no alignment
+[comment]: # (is it worth putting the other countries' assessment areas on the map too?)
+
+
+```{r old assessement areas}
+#Map
+COMP3_areas <- readOGR(dsn = "Shapefiles", layer = "CP2_WGS84", verbose = F)
 leaflet(COMP3_areas) %>%
   addTiles() %>%
-  addPolygons(color = "black", fillOpacity = 0, weight = 1, label = COMP3_areas$CP2_Region) %>% # popups not quite working properly
+  addPolygons(color = "black", fillOpacity = 0, weight = 1, label = paste0("Region ", COMP3_areas$CP2_Region)) %>% # popups not quite working properly
   setView(-0,55,zoom = 5)
-#DIN. toggle for coastal/offshore
-#Chl
-#Doxy
+
 
 ```
 
