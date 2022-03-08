@@ -78,6 +78,33 @@ leaflet(COMP4_areas) %>%
 
 ```
 
+```{r plumes}
+#livbay
+COMP4_areas <- sf:::as_Spatial(st_zm(COMP4_areas))
+
+livbay <- leaflet(COMP4_areas) %>%
+  addTiles() %>%
+  addPolygons(color = "black", fillOpacity = 0, weight = 1) %>%
+  fitBounds(lng1 = bbox(subset(COMP4_areas, ID == "LBPM"))[1], lat1 = bbox(subset(COMP4_areas, ID == "LBPM"))[2], lng2 = bbox(subset(COMP4_areas, ID == "LBPM"))[3], lat2 = bbox(subset(COMP4_areas, ID == "LBPM"))[4])
+livbay
+#thames
+
+thames <- leaflet(COMP4_areas) %>%
+  addTiles() %>%
+  addPolygons(color = "black", fillOpacity = 0, weight = 1) %>%
+  fitBounds(lng1 = bbox(subset(COMP4_areas, ID == "THPM"))[1], lat1 = bbox(subset(COMP4_areas, ID == "THPM"))[2], lng2 = bbox(subset(COMP4_areas, ID == "THPM"))[3], lat2 = bbox(subset(COMP4_areas, ID == "THPM"))[4])
+thames
+#humber
+
+humber <- leaflet(COMP4_areas) %>%
+  addTiles() %>%
+  addPolygons(color = "black", fillOpacity = 0, weight = 1) %>%
+  fitBounds(lng1 = bbox(subset(COMP4_areas, ID == "HPM"))[1], lat1 = bbox(subset(COMP4_areas, ID == "HPM"))[2], lng2 = bbox(subset(COMP4_areas, ID == "HPM"))[3], lat2 = bbox(subset(COMP4_areas, ID == "HPM"))[4])
+humber
+
+sync(m1, m2, m3, ncol = 3, sync.cursor = F)
+```
+
 ## New Assessment thresholds
 
 ### Eunosat
@@ -144,9 +171,12 @@ Comparison of old and new thresholds - show assessment areas where they go up an
 
 ## WFD thresholds
 
-Map of these? How does this affect them?
+Below is a map of WFD areas showing which COMP4 area(s) they align with.
 
-``` {r wfd}
+[comment]: # (add the actual WFD thresholds when I have them.)
+
+
+```{r wfd}
 
 wfd <- readOGR(dsn = "Shapefiles", layer = "WFD_UK", verbose = F)
 wfd <- spTransform(wfd, CRS("+init=epsg:4326"))
