@@ -1,6 +1,6 @@
 ---
 title: "OSPAR Assessment Steps for UK ESG"
-author: "Kate Collingridge and Liam Fernand"
+author: "Kate Collingridge, Liam Fernand and Michelle Devlin"
 date: "22/02/2022"
 output: html_document
 ---
@@ -17,22 +17,7 @@ knitr::opts_chunk$set(echo = FALSE, warning = FALSE, message = FALSE)
 
 This document presents the new proposed methods for the COMP4 OSPAR eutrophication assessment, including thresholds for UK assessment areas for consideration by the Eutrophication Steering Group. For more detail on how the thresholds and assessment areas were developed see the ICG-EMO report and OSPAR COMP Annexes (3 and 7).
 
-### COMP3 thresholds
-
-For the previous UK comprehensive eutrophication assessment (COMP3) thresholds were the same for all assessment areas and only dependent on salinity with a different threshold for "coastal" and "offshore" waters.
-[comment]: # (Maybe add something about the assessment statistics too?)
-
-
-
-```{r old thresholds}
-#old assessment thresholds.
-
-thres_COMP3 <- data.frame(Variable = c("DIN", "CPHL", "DOXY"),
-                          Coastal_threshold = c(18, 15, 6),
-                          Offshore_threshold  = c(15, 10, 6),
-                          Metric = c("Mean", "90th percentile", "Mean of lowest quartile in bottom waters"))
-kable(thres_COMP3)
-```
+# COMP3
 
 ### COMP3 Assessment areas
 
@@ -50,15 +35,35 @@ leaflet(COMP3_areas) %>%
 
 
 ```
+### COMP3 thresholds
 
-## Eunosat
+For the previous UK comprehensive eutrophication assessment (COMP3) thresholds were the same for all assessment areas and only dependent on salinity with a different threshold for "coastal" and "offshore" waters.
+[comment]: # (Maybe add something about the assessment statistics too?)
 
-During the eunosat project a different approach for determining thresholds was developed. "Reference conditions" for nutrients and chlorophyll were modelled for the year 1900 and 50% was added to these to form the assessment thresholds. This was based on xxx model at Deltares.
 
-### Assessment areas
 
-At the same time new "ecologically coherent" assessment areas were developed (more detail, or just ref eunosat report). These have been further modified to incorporate river plumes (e.g. Thames, Humber and Liverpool Bay) and additional assessment areas in places not covered during the EUNOSAT project.
-Assessment thresholds were averaged for each assessment area.
+```{r old thresholds}
+#old assessment thresholds.
+
+thres_COMP3 <- data.frame(Variable = c("DIN", "CPHL", "DOXY"),
+                          Coastal_threshold = c(18, 15, 6),
+                          Offshore_threshold  = c(15, 10, 6),
+                          Metric = c("Mean", "90th percentile", "Mean of lowest quartile in bottom waters"))
+kable(thres_COMP3)
+```
+
+
+[comment]: # (should we include the results of the previous assessment here?? And that it was a simple pass/fail with confidence assessment)
+
+
+# COMP4
+
+Between the COMP3 and anticipated COMP4 assessments there have been many developments to make the assessments more scientifically robust, ecologically relevant and coherent between countries. These developments started in the EUNOSAT project focussed on the North Sea and have been further developed in OSPAR through ICG-EMO and TG-COMP.
+
+## New Assessment areas
+
+During the EUNOSAT project new "ecologically coherent" assessment areas were developed (more detail, or just ref eunosat report). These have been further modified to incorporate river plumes (e.g. Thames, Humber and Liverpool Bay) and additional assessment areas in places not covered during the EUNOSAT project.
+
 
 ```{r assessment areas}
 COMP4_areas <- sf::st_read("https://raw.githubusercontent.com/ices-tools-dev/COMPEAT/master/assessment_areas/COMP4_assessment_areas.csv",quiet = T) %>%
@@ -69,18 +74,33 @@ leaflet(COMP4_areas) %>%
   addPolygons(color = "black", fillOpacity = 0, weight = 1, label = ~COMP4_areas$ID, popup = COMP4_areas$Area_Name_) %>% # popups not quite working properly
   setView(-0,55,zoom = 5)
 
+#include more detailed map of plume areas explaining how WFD areas were incorporated.
+
 ```
+
+## New Assessment thresholds
+
+### Eunosat
+
+During the eunosat project a different approach for determining thresholds was developed. "Reference conditions" for nutrients and chlorophyll were modelled for the year 1900 and 50% was added to these to form the assessment thresholds for nutrients and chlorophyll. This was based on xxx model at Deltares.
+
+[comment]: # (could add a map here but might be better just to skip to the later versions)
+
 
 ## ICG-EMO
 
 The work on thresholds has been further developed by ICG-EMO, using x models.... Liam to expand.
 
+Assessment thresholds were averaged for each assessment area.
+
 HS1 and HS2 scenarios
+
+Relative method
 
 ```{r new thresholds}
 #Thresholds
 
-thres <- read.table("C:/Users/KC05/OneDrive - CEFAS/Shiny_apps/COMP_data/COMP_data_shiny/data/Thresholds_ICGEMO_Jan2022.csv", header = T, sep = ",")
+thres <- read.table("C:/Users/KC05/OneDrive - CEFAS/Shiny_apps/COMP_data/COMP_data_shiny/data/Thresholds_ICGEMO_Jan2022.csv", header = T, sep = ",") # these are the HS1 thresholds
 
 #merge thresholds onto COMP4_areas
 
@@ -120,8 +140,22 @@ sync(m1, m2, m3, ncol = 3, sync.cursor = F)
 ```
 
 Any points of discussion.
-Comparison of old and new thresholds
+Comparison of old and new thresholds - show assessment areas where they go up and down.
 
 ## WFD thresholds
 
 Map of these? How does this affect them?
+
+## EQRS
+
+Flow chart explaining EQRS
+
+## Confidence
+
+Section on confidence ratings
+
+## Data
+
+Perhaps for another document, include map of all data currently included in the assessment
+
+## Assessment results?
