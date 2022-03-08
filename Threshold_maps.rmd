@@ -146,6 +146,18 @@ Comparison of old and new thresholds - show assessment areas where they go up an
 
 Map of these? How does this affect them?
 
+``` {r wfd}
+
+wfd <- readOGR(dsn = "Shapefiles", layer = "WFD_UK", verbose = F)
+wfd <- spTransform(wfd, CRS("+init=epsg:4326"))
+leaflet(wfd) %>%
+  addTiles() %>%
+  addPolygons(color = "green", fillOpacity = 0, weight = 1, label = paste0(wfd$WB_NAME, ";   Adjacent COMP4 assessment area: ", wfd$COMP4_area)) %>% 
+  addPolygons(data = COMP4_areas, color = "black", fillOpacity = 0, weight = 1, label = paste0(COMP4_areas$ID, " - ", COMP4_areas$Area_Name_)) %>%
+  setView(-0,55,zoom = 5)
+
+```
+
 ## EQRS
 
 Flow chart explaining EQRS
