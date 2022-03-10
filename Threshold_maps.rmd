@@ -67,7 +67,9 @@ During the EUNOSAT project new "ecologically coherent" assessment areas were dev
 
 
 ```{r assessment areas}
-COMP4_areas <- sf::st_read("https://raw.githubusercontent.com/ices-tools-dev/COMPEAT/master/assessment_areas/COMP4_assessment_areas.csv",quiet = T) %>%
+COMP4_areas <- sf::st_read("https://raw.githubusercontent.com/ices-tools-prod/COMPEAT/master/assessment_areas/COMP4_assessment_areas.csv",quiet = T) %>%
+  st_set_crs(4326)
+#COMP4_areas <- sf::st_read("assessment_areas/COMP4_assessment_areas.csv") %>%
   st_set_crs(4326)
 #Map of new assessment areas
 leaflet(COMP4_areas) %>%
@@ -197,16 +199,63 @@ Comparison of old and new thresholds - show assessment areas where they go up an
 sal <- raster("Z:/Eutrophication/EUNOSAT/project_output/newmodelresultsfromanouk_nov19/sal.tif")
 
 
-sal_mean <- extract(sal, COMP4_areas, fun = mean, df = TRUE, na.rm = TRUE)
+#sal_mean <- extract(sal, COMP4_areas, fun = mean, df = TRUE, na.rm = TRUE)
+#save(sal_mean, file = "Shapefiles/sal_mean.rdata")
+load("Shapefiles/sal_mean.rdata")
 
-sal_std <- extract(sal, COMP4_areas, fun = sd, df = TRUE, na.rm = TRUE)
+#sal_std <- extract(sal, COMP4_areas, fun = sd, df = TRUE, na.rm = TRUE)
+#save(sal_std, file = "Shapefiles/sal_std.rdata")
+load("Shapefiles/sal_std.rdata")
 
-sal_10pc <- extract(sal, COMP4_areas, fun = function(x,...){quantile(x, 0.1,na.rm = TRUE)}, df = TRUE, na.rm = TRUE)
+#sal_10pc <- extract(sal, COMP4_areas, fun = function(x,...){quantile(x, 0.1,na.rm = TRUE)}, df = TRUE, na.rm = TRUE)
+#save(sal_10pc, file = "Shapefiles/sal_10pc.rdata")
+load("Shapefiles/sal_10pc.rdata")
 
-sal_90pc <- extract(sal, COMP4_areas, fun = function(x,...){quantile(x, 0.9,na.rm = TRUE)}, df = TRUE, na.rm = TRUE)
+#sal_90pc <- extract(sal, COMP4_areas, fun = function(x,...){quantile(x, 0.9,na.rm = TRUE)}, df = TRUE, na.rm = TRUE)
+#save(sal_90pc, file = "Shapefiles/sal_90pc.rdata")
+load("Shapefiles/sal_90pc.rdata")
 
-thresholds <- cbind(regions@data, sal_mean, sal_std, sal_10pc, sal_90pc)
+sal <- cbind(COMP4_areas$ID, sal_mean[2], sal_std[2], sal_10pc[2], sal_90pc[2])
+colnames(sal) <- c("ID", "sal_mean", "sal_std", "sal_10pc", "sal_90pc")
+sal <- sal[!is.na(sal$sal_mean),]
+sal$CO <- NA
+#Setting coastal and offshore for those areas that are entirely in one category based on salinity extremes (10th and 90th percentiles)
+sal[sal$sal_90pc<34.5 & sal$ID != "IRS" & sal$ID != "LBPM",]$CO <- "coastal"
+sal[sal$sal_10pc>34.5 & sal$ID != "IRS" & sal$ID != "LBPM",]$CO <- "offshore"
 
+sal[sal$sal_90pc<34 & sal$ID == "IRS" | sal$ID == "LBPM",]$CO <- "coastal"
+sal[sal$sal_10pc>34 & sal$ID == "IRS" | sal$ID == "LBPM",]$CO <- "offshore"
+
+sal$classification <- NA
+
+sal[is.na(sal$CO),]$classification <- "Salinity varies between 'coastal' and 'offshore'"
+
+
+#Setting coastal and offshore for those areas that are overlap categories based on salinity means 
+
+sal[sal$sal_mean<34.5 & sal$ID != "IRS" & is.na(sal$CO),]$CO <- "coastal"
+sal[sal$sal_mean>34.5 & sal$ID != "IRS" & is.na(sal$CO),]$CO <- "offshore"
+
+sal[sal$sal_mean<34 & sal$ID == "IRS" & is.na(sal$CO),]$CO <- "coastal"
+sal[sal$sal_mean>34  & sal$ID == "IRS" & is.na(sal$CO),]$CO <- "offshore" # error because already flagged as coastal
+
+
+#Add COMP3 thresholds
+
+sal$COMP3_DIN <- NA
+sal$COMP3_CPHL <- NA
+sal$COMP3_DO <- NA
+
+sal[sal$CO == "coastal",]$COMP3_DIN <- thres_COMP3[thres_COMP3$Variable == "DIN",]$Coastal_threshold
+sal[sal$CO == "offshore",]$COMP3_DIN <- thres_COMP3[thres_COMP3$Variable == "DIN",]$Offshore_threshold
+
+sal[sal$CO == "coastal",]$COMP3_CPHL <- thres_COMP3[thres_COMP3$Variable == "CPHL",]$Coastal_threshold
+sal[sal$CO == "offshore",]$COMP3_CPHL <- thres_COMP3[thres_COMP3$Variable == "CPHL",]$Offshore_threshold
+
+sal[sal$CO == "coastal",]$COMP3_DO <- thres_COMP3[thres_COMP3$Variable == "DOXY",]$Coastal_threshold
+sal[sal$CO == "offshore",]$COMP3_DO <- thres_COMP3[thres_COMP3$Variable == "DOXY",]$Offshore_threshold
+
+COMP4_areas_COMP3_thres <- sal[,c(1,6:10)]
 
 ```
 ## WFD thresholds
