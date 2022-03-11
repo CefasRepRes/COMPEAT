@@ -314,7 +314,7 @@ sync(DIN_map, CPHL_map, ncol = 2, sync.cursor = F) # does this need to be two ma
 
 ```
 
-The map below shows the difference between old and new thresholds for DIN and Chlorophyll. For DIN both thresholds are for the mean. For chlorophyll the threshold for COMP3 is for the 90th percentile. COMP4 will use the mean but for the purposes of comparison this map shows the 90th percentile from the ICG_EMO work.
+The map below shows the difference between old and new thresholds for DIN and Chlorophyll (values above 0 are where the new threshold is higher, below 0 where the old threshold was higher. For DIN both thresholds are for the mean. For chlorophyll the threshold for COMP3 is for the 90th percentile. COMP4 will use the mean but for the purposes of comparison this map shows the 90th percentile from the ICG_EMO work (less trusted results than the mean).
 
 ```{r comparison}
 COMP4_areas_COMP3_thres2$DINmean_diff <- COMP4_areas_COMP3_thres2$DIN - COMP4_areas_COMP3_thres2$COMP3_DIN
@@ -325,15 +325,15 @@ pal <- colorNumeric(palette = cmocean("curl")(255), domain = c(-15,15), na.color
  
 DINdiff_map <- leaflet(COMP4_areas_COMP3_thres2) %>%
   addTiles() %>%
-  addPolygons(fillColor = ~pal(DINmean_diff) , color = "black", fillOpacity = 1, weight = 1, label = paste0(COMP4_areas_COMP3_thres2$Area_Name_, ": DIN difference ", COMP4_areas_COMP3_thres2$DINmean_diff, " uM")) %>% 
-  addLegend(pal = pal, values = c(-15,15), title = "DIN (uM)") %>%
+  addPolygons(fillColor = ~pal(DINmean_diff) , color = "black", fillOpacity = 1, weight = 1, label = paste0(COMP4_areas_COMP3_thres2$Area_Name_, ": New DIN threshold ", (COMP4_areas_COMP3_thres2$DINmean_diff)*(-1), " uM  lower")) %>% 
+  addLegend(pal = pal, values = c(-15,15), title = "DIN diff (uM)") %>%
   setView(-0,55,zoom = 5)
 
 pal <- colorNumeric(palette = cmocean("curl")(255), domain = c(-15,15), na.color = "#00000000")
 CPHLdiff_map <- leaflet(COMP4_areas_COMP3_thres2) %>%
   addTiles() %>%
-  addPolygons(fillColor = ~pal(CPHL90_diff) , color = "black", fillOpacity = 1, weight = 1, label = paste0(COMP4_areas_COMP3_thres2$Area_Name_, ": CPHL ", COMP4_areas_COMP3_thres2$CPHL90_diff, " ug/l")) %>% 
-  addLegend(pal = pal, values = c(-15,15), title = "Chlorophyll 90pc (ug/l)") %>%
+  addPolygons(fillColor = ~pal(CPHL90_diff) , color = "black", fillOpacity = 1, weight = 1, label = paste0(COMP4_areas_COMP3_thres2$Area_Name_, ": New CPHL threshold ", (COMP4_areas_COMP3_thres2$CPHL90_diff)*(-1), " ug/l lower")) %>% 
+  addLegend(pal = pal, values = c(-15,15), title = "Chlorophyll 90pc diff (ug/l)") %>%
   setView(-0,55,zoom = 5)
 
 sync(DINdiff_map, CPHLdiff_map, ncol = 2, sync.cursor = F) # does this need to be two maps or one with multiple layers?? tried this and it doesn't seem to work.
