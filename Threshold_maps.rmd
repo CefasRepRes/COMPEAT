@@ -186,7 +186,7 @@ COMP4_areas <- merge(COMP4_areas,thres,by="ID")
 pal <- colorNumeric(palette = viridis(255), domain = c(0,20), na.color = "#00000000")
 m1 <- leaflet(COMP4_areas) %>%
   addTiles() %>%
-  addPolygons(fillColor = ~pal(Chla) ,color = "black", fillOpacity = 1, weight = 1, popup = paste0(COMP4_areas$Area_Name_, "<br>","Chlorophyll", " theshold: ", as.character(round(COMP4_areas$Chla,2)), " (HS1).")) %>%
+  addPolygons(fillColor = ~pal(Chla) ,color = "black", fillOpacity = 1, weight = 1, popup = paste0(COMP4_areas$Area_Name_, "<br>","Chlorophyll theshold: ", as.character(round(COMP4_areas$Chla,2)), " (HS1).", "<br>", "(90thpc thres would be ", COMP4_areas$Chla90th, ")")) %>%
   addLegend(pal = pal, values = c(0,20), title = "Chlorophyll (ug/l)") %>%
   setView(3,54, zoom = 4)
 
@@ -195,7 +195,7 @@ m1 <- leaflet(COMP4_areas) %>%
 pal <- colorNumeric(palette = viridis(255), domain = c(0,30), na.color = "#00000000")
 m2 <- leaflet(COMP4_areas) %>%
   addTiles() %>%
-  addPolygons(fillColor = ~pal(DIN) ,color = "black", fillOpacity = 1, weight = 1, popup = paste0(COMP4_areas$Area_Name_, "<br>","Chlorophyll", " theshold: ", as.character(round(COMP4_areas$DIN,2)), " (HS1)")) %>%
+  addPolygons(fillColor = ~pal(DIN) ,color = "black", fillOpacity = 1, weight = 1, popup = paste0(COMP4_areas$Area_Name_, "<br>","DIN", " theshold: ", as.character(round(COMP4_areas$DIN,2)), " (HS1)")) %>%
   addLegend(pal = pal, values = c(0,30), title = "DIN (uM)") %>%
   setView(3,54, zoom = 4)
 
@@ -204,7 +204,7 @@ m2 <- leaflet(COMP4_areas) %>%
 pal <- colorNumeric(palette = viridis(255), domain = c(0,3), na.color = "#00000000")
 m3 <- leaflet(COMP4_areas) %>%
   addTiles() %>%
-  addPolygons(fillColor = ~pal(DIP) ,color = "black", fillOpacity = 1, weight = 1, popup = paste0(COMP4_areas$Area_Name_, "<br>","Chlorophyll", " theshold: ", as.character(round(COMP4_areas$DIP,2)), " (HS1)")) %>%
+  addPolygons(fillColor = ~pal(DIP) ,color = "black", fillOpacity = 1, weight = 1, popup = paste0(COMP4_areas$Area_Name_, "<br>","DIP theshold: ", as.character(round(COMP4_areas$DIP,2)), " (HS1)")) %>%
   addLegend(pal = pal, values = c(0,3), title = "DIP (uM)") %>%
   setView(3,54, zoom = 4)
 
