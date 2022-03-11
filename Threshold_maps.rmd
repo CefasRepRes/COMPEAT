@@ -13,10 +13,33 @@ library(leafsync)
 library(rgdal)
 library(knitr)
 library(raster)
+library(cmocean)
 knitr::opts_chunk$set(echo = FALSE, warning = FALSE, message = FALSE)
 ```
 
-This document presents the new proposed methods for the COMP4 OSPAR eutrophication assessment, including thresholds for UK assessment areas for consideration by the Eutrophication Steering Group. For more detail on how the thresholds and assessment areas were developed see the ICG-EMO report and OSPAR COMP Annexes (3 and 7).
+This is a summary of the process for delivery of the  fourth OSPAR assessment for the eutrophication status of the OSPAR Maritime Area under the Common Procedure for the Identification of the eutrophication status of the OSPAR Maritime Area (the “Common Procedure”) (OSPAR, 2022). It follows and builds on the results of the previous applications of the Comprehensive Procedure (OSPAR, 2003a, 2008, 2017).  It is a summary of the approach, the changes that have occurred since the third OSPAR assessment, particularly in relation to UK marine waters. 
+
+The purpose of the assessment is:
+
+<li>to assess the eutrophication status of the OSPAR Maritime Area and its Regions based on data for the period 2015–2019(2020?); </li>
+<li>to evaluate progress made towards achieving the objectives of the OSPAR Eutrophication Strategy; </li>
+<li>to consider the effectiveness of measures taken to combat eutrophication on the state of the marine environment, and; </li>
+<li>to identify priorities for future actions. </li>
+
+
+The application of the Common Procedure differs from earlier reports as this is the first time it has been applied using a harmonised assessment tool, COMPEAT. This applies the Common Procedure in a uniform, semi-automated way across the OSPAR Convention Area, removing the need for national eutrophication reports.
+
+OSPAR’s North East Atlantic Environment Strategy (OSPAR, 2021) takes forward work related to the implementation of the Ecosystem Approach and the suite of five thematic strategies, to address the main threats that it has identified concerning issues within its competence. The aim of the OSPAR Eutrophication Strategy is to make every effort to combat eutrophication in the OSPAR Maritime Area in order to achieve and maintain, by 2020, a healthy marine environment where eutrophication does not occur. 
+ 
+The OSPAR Maritime Area covers most of the North-East Atlantic. It embraces open sea areas as well as inshore and coastal waters adjacent to densely populated catchments where pressures from human activities are particularly high
+
+
+# Common Procedure
+
+The Common Procedure makes use of the OSPAR Common Indicators (Winter nutrient concentrations; Concentrations of chlorophyll-a; and Concentrations of Dissolved Oxygen Near the Seafloor) and applies a common assessment tool (COMPEAT) in order to produce an assessment of eutrophication status for each assessment area within the entire OSPAR Convention area.
+
+OSPAR eutrophication data are collected through the Joint Assessment and Monitoring Programme and reported annually to ICES, which is responsible for the management and storage of the data. The COMPEAT tool extracts relevant eutrophication data from the ICES databases and assesses eutrophication criteria against agreed threshold levels in ecologically relevant assessment units. Data collected outside of the JAMP (Joint Assessment Monitoring Programme), or assessed for example under the Water Framework Directive (WFD), can be included in the assessment system. The assessment results are reported in terms of an Ecological Quality Ratios (EQRs) which allows the relative distance to Non-problem status to be visualised. Trends in EQRs can provide estimates of the time needed before Non-problem status is reached, on the assumption that measures continue to be implemented. 
+
 
 # COMP3
 
@@ -51,6 +74,7 @@ thres_COMP3 <- data.frame(Variable = c("DIN", "CPHL", "DOXY"),
                           Offshore_threshold  = c(15, 10, 6),
                           Metric = c("Mean", "90th percentile", "Mean of lowest quartile in bottom waters"))
 kable(thres_COMP3)
+
 ```
 
 
@@ -69,8 +93,7 @@ During the EUNOSAT project new "ecologically coherent" assessment areas were dev
 ```{r assessment areas}
 COMP4_areas <- sf::st_read("https://raw.githubusercontent.com/ices-tools-prod/COMPEAT/master/assessment_areas/COMP4_assessment_areas.csv",quiet = T) %>%
   st_set_crs(4326)
-#COMP4_areas <- sf::st_read("assessment_areas/COMP4_assessment_areas.csv") %>%
-  st_set_crs(4326)
+#COMP4_areas <- sf::st_read("assessment_areas/COMP4_assessment_areas.csv") %>% st_set_crs(4326)
 #Map of new assessment areas
 leaflet(COMP4_areas) %>%
   addTiles() %>%
@@ -184,14 +207,18 @@ m3 <- leaflet(COMP4_areas) %>%
   addPolygons(fillColor = ~pal(DIP) ,color = "black", fillOpacity = 1, weight = 1, popup = paste0(COMP4_areas$Area_Name_, "<br>","Chlorophyll", " theshold: ", as.character(round(COMP4_areas$DIP,2)), " (HS1)")) %>%
   addLegend(pal = pal, values = c(0,3), title = "DIP (uM)") %>%
   setView(3,54, zoom = 4)
-sync(m1, m2, m3, ncol = 3, sync.cursor = F)
+
+sync(m2, m3, m1, ncol = 3, sync.cursor = F)
 
 #Doxy - Don't need map, it is 6 mg/l everywhere.
 
 ```
 
 Any points of discussion.
-Comparison of old and new thresholds - show assessment areas where they go up and down.
+
+The map below shows the thresholds used in COMP3, for comparison. As COMP3 thresholds were based on salinity, the new assessment areas have been classified by salinity to match these and show the appropriate threshold. (think maybe this map not necessary, could be a table, the difference one is more useful)
+
+
 ```{r salinity, eval = F}
 
 #Calculate average and min/max salinity of each assessment area to know whether to assign it coastal or offshore for old thresholds, then calculate difference between old and new thresholds and plot on map.
@@ -223,8 +250,8 @@ sal$CO <- NA
 sal[sal$sal_90pc<34.5 & sal$ID != "IRS" & sal$ID != "LBPM",]$CO <- "coastal"
 sal[sal$sal_10pc>34.5 & sal$ID != "IRS" & sal$ID != "LBPM",]$CO <- "offshore"
 
-sal[sal$sal_90pc<34 & sal$ID == "IRS" | sal$ID == "LBPM",]$CO <- "coastal"
-sal[sal$sal_10pc>34 & sal$ID == "IRS" | sal$ID == "LBPM",]$CO <- "offshore"
+sal[sal$ID == "LBPM",]$CO <- "coastal" # doing this one manually
+sal[sal$ID == "IRS" ,]$CO <- "offshore" # doing this one manually
 
 sal$classification <- NA
 
@@ -236,8 +263,7 @@ sal[is.na(sal$CO),]$classification <- "Salinity varies between 'coastal' and 'of
 sal[sal$sal_mean<34.5 & sal$ID != "IRS" & is.na(sal$CO),]$CO <- "coastal"
 sal[sal$sal_mean>34.5 & sal$ID != "IRS" & is.na(sal$CO),]$CO <- "offshore"
 
-sal[sal$sal_mean<34 & sal$ID == "IRS" & is.na(sal$CO),]$CO <- "coastal"
-sal[sal$sal_mean>34  & sal$ID == "IRS" & is.na(sal$CO),]$CO <- "offshore" # error because already flagged as coastal
+
 
 
 #Add COMP3 thresholds
@@ -256,8 +282,65 @@ sal[sal$CO == "coastal",]$COMP3_DO <- thres_COMP3[thres_COMP3$Variable == "DOXY"
 sal[sal$CO == "offshore",]$COMP3_DO <- thres_COMP3[thres_COMP3$Variable == "DOXY",]$Offshore_threshold
 
 COMP4_areas_COMP3_thres <- sal[,c(1,6:10)]
+save(COMP4_areas_COMP3_thres, file = "Shapefiles/COMP4_areas_COMP3_thres.rdata")
+
+
 
 ```
+
+```{r old thres}
+#load("Shapefiles/COMP4_areas_COMP3_thres.rdata")
+#write.csv(COMP4_areas_COMP3_thres, "Shapefiles/COMP4_areas_COMP3_thres.csv")
+COMP4_areas_COMP3_thres <- read.table("Shapefiles/COMP4_areas_COMP3_thres.csv", sep = ",", header = T)
+
+COMP4_areas_COMP3_thres2 <- merge(COMP4_areas, COMP4_areas_COMP3_thres, all.x = T, by = "ID")
+
+pal <- colorNumeric(palette = viridis(255), domain = c(0,30), na.color = "#00000000")
+DIN_map <- leaflet(COMP4_areas_COMP3_thres2) %>%
+  addTiles() %>%
+  addPolygons(fillColor = ~pal(COMP3_DIN) , color = "black", fillOpacity = 1, weight = 1, label = paste0(COMP4_areas_COMP3_thres2$Area_Name_, ": DIN ", COMP4_areas_COMP3_thres2$COMP3_DIN, " uM")) %>% 
+  addLegend(pal = pal, values = c(0,30), title = "DIN (uM)") %>%
+  setView(-0,55,zoom = 5)
+
+pal <- colorNumeric(palette = viridis(255), domain = c(0,20), na.color = "#00000000")
+CPHL_map <- leaflet(COMP4_areas_COMP3_thres2) %>%
+  addTiles() %>%
+  addPolygons(fillColor = ~pal(COMP3_CPHL) , color = "black", fillOpacity = 1, weight = 1, label = paste0(COMP4_areas_COMP3_thres2$Area_Name_, ": CPHL ", COMP4_areas_COMP3_thres2$COMP3_CPHL, " ug/l")) %>% 
+  addLegend(pal = pal, values = c(0,20), title = "Chlorophyll 90pc (ug/l)") %>%
+  setView(-0,55,zoom = 5)
+
+sync(DIN_map, CPHL_map, ncol = 2, sync.cursor = F) # does this need to be two maps or one with multiple layers?? tried this and it doesn't seem to work.
+
+
+```
+
+The map below shows the difference between old and new thresholds for DIN and Chlorophyll. For DIN both thresholds are for the mean. For chlorophyll the threshold for COMP3 is for the 90th percentile. COMP4 will use the mean but for the purposes of comparison this map shows the 90th percentile from the ICG_EMO work.
+
+```{r comparison}
+COMP4_areas_COMP3_thres2$DINmean_diff <- COMP4_areas_COMP3_thres2$DIN - COMP4_areas_COMP3_thres2$COMP3_DIN
+
+COMP4_areas_COMP3_thres2$CPHL90_diff <- COMP4_areas_COMP3_thres2$Chla90th - COMP4_areas_COMP3_thres2$COMP3_CPHL#I have done this comparison based on the 90th percentile
+
+pal <- colorNumeric(palette = cmocean("curl")(255), domain = c(-15,15), na.color = "#00000000")
+ 
+DINdiff_map <- leaflet(COMP4_areas_COMP3_thres2) %>%
+  addTiles() %>%
+  addPolygons(fillColor = ~pal(DINmean_diff) , color = "black", fillOpacity = 1, weight = 1, label = paste0(COMP4_areas_COMP3_thres2$Area_Name_, ": DIN difference ", COMP4_areas_COMP3_thres2$DINmean_diff, " uM")) %>% 
+  addLegend(pal = pal, values = c(-15,15), title = "DIN (uM)") %>%
+  setView(-0,55,zoom = 5)
+
+pal <- colorNumeric(palette = cmocean("curl")(255), domain = c(-15,15), na.color = "#00000000")
+CPHLdiff_map <- leaflet(COMP4_areas_COMP3_thres2) %>%
+  addTiles() %>%
+  addPolygons(fillColor = ~pal(CPHL90_diff) , color = "black", fillOpacity = 1, weight = 1, label = paste0(COMP4_areas_COMP3_thres2$Area_Name_, ": CPHL ", COMP4_areas_COMP3_thres2$CPHL90_diff, " ug/l")) %>% 
+  addLegend(pal = pal, values = c(-15,15), title = "Chlorophyll 90pc (ug/l)") %>%
+  setView(-0,55,zoom = 5)
+
+sync(DINdiff_map, CPHLdiff_map, ncol = 2, sync.cursor = F) # does this need to be two maps or one with multiple layers?? tried this and it doesn't seem to work.
+
+
+```
+
 ## WFD thresholds
 
 Below is a map of WFD areas showing which COMP4 area(s) they align with.
@@ -282,7 +365,7 @@ Flow chart explaining EQRS
 
 ## Confidence
 
-Section on confidence ratings
+cnfidence rating of the individual assessment parameters will be applied to indicate the reliability of the data gained from in-situ monitoring, monitoring using novel observation tools (automated buoys, satellite data) and modelling.  Confidence rating of novel observation tools and modelling is estimated during the processing of these data and provided together with the data products, while the confidence of in-situ data is calculated directly in the COMPEAT tool. The confidence of the different data types is combined to the parameter confidence by using weighted averaging, similar to the agreed procedure for the combination of different data types to obtain the status assessment result of the respective parameter. Confidence of assessment against area-specific assessment levels in terms of the probability of correct classification considering the uncertainty as well as of representativeness of monitoring stations in space and time will be assessed.
 
 ## Data
 
