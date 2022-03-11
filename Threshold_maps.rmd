@@ -154,7 +154,11 @@ livbay
 
 ## New Assessment thresholds
 
-### Eunosat
+### Ehype. 
+
+THe E-hype project produced estimates of the DIN, DIP discharge for the major European rivers for the year 1900 corresponding to a pre industrialisation of production of condition. 
+
+Eunosat  - One model was used but we have moved to an ensemble. 
 
 During the eunosat project a different approach for determining thresholds was developed. "Reference conditions" for nutrients and chlorophyll were modelled for the year 1900 and 50% was added to these to form the assessment thresholds for nutrients and chlorophyll. This was based on xxx model at Deltares.
 
@@ -163,13 +167,30 @@ During the eunosat project a different approach for determining thresholds was d
 
 ## ICG-EMO
 
-The work on thresholds has been further developed by ICG-EMO, using x models.... Liam to expand.
+The work on thresholds has been further developed by ICG-EMO. 
+It has a specific steps. 
+1. Use the e-hype river rine conditions for 1900  (Historic Scenario 1 and 2)  Each country looked at the scenarios for their country and checked if they were broadly in agreement.  Germany identified an additional scenario which varied the DIP for Dutch, German and Danish Waters.  HS1 and HS2 Scenarios. 
 
-Assessment thresholds were averaged for each assessment area.
 
-HS1 and HS2 scenarios
+2  Mutliple models where run for the HS1 and HS2  
 
-Relative method
+3. The models were also run for a Current Status period 2009 -2014. MOdel information extracted at the assessment region scale.
+4. For each assessment region,  the model CS period runs for  models were compared with insitu observations and the satellite insitu product from Compeat. It used the output from COMPEAT at the assessment unit scale. 
+
+This produces a weighting factor where models that represent the observations well contribute more highly than those which represent the observations poorly.  This wieghting is used to apply to all the models in the historic scenario, to produce a wieghted ensemble of the reference condition , for both HS1 and HS2. 
+
+This produces the BEST value – as COMPEAT uses it.  Defines the top end of HIGH status.
+
+The acceptable deviation is defined as 50%  this sets the good/moderate threshold.     e.g. DIN for Altantic Best is 10 threshold is 15.
+
+Convince people they can trust the results.  - Use relative method to gain confidence in results.  
+
+The Relative method works by using the % reduction between the model historic runs and the current status run and then applying that to the observations in the current status run . Then multiple by the acceptable deviation.  It is reliant on having good quality data. 
+
+Hierarchy – Use threshold weighted ensemble, relative method, some other value. 
+
+
+
 
 ```{r new thresholds}
 #Thresholds
