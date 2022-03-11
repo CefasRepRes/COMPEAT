@@ -154,13 +154,9 @@ livbay
 
 ## New Assessment thresholds
 
-### Ehype. 
+### Ehype/Eunosat
 
-THe E-hype project produced estimates of the DIN, DIP discharge for the major European rivers for the year 1900 corresponding to a pre industrialisation of production of condition. 
-
-Eunosat  - One model was used but we have moved to an ensemble. 
-
-During the eunosat project a different approach for determining thresholds was developed. "Reference conditions" for nutrients and chlorophyll were modelled for the year 1900 and 50% was added to these to form the assessment thresholds for nutrients and chlorophyll. This was based on xxx model at Deltares.
+During the eunosat project a different approach for determining thresholds was developed. THe E-hype project produced estimates of the DIN and DIP discharge for the major European rivers for the year 1900 corresponding to a pre industrialisation of production of condition. These were used to model "Reference conditions" for nutrients and chlorophyll for the year 1900 using E-hype inputs and 50% was added to these to form the assessment thresholds for nutrients and chlorophyll. This was based on xxx model at Deltares.
 
 [comment]: # (could add a map here but might be better just to skip to the later versions)
 
@@ -168,27 +164,32 @@ During the eunosat project a different approach for determining thresholds was d
 ## ICG-EMO
 
 The work on thresholds has been further developed by ICG-EMO. 
-It has a specific steps. 
-1. Use the e-hype river rine conditions for 1900  (Historic Scenario 1 and 2)  Each country looked at the scenarios for their country and checked if they were broadly in agreement.  Germany identified an additional scenario which varied the DIP for Dutch, German and Danish Waters.  HS1 and HS2 Scenarios. 
+It has the following specific steps.
+
+<ol>
+
+<li>The e-hype riverine conditions for 1900 were used with two scenarios (HS1 and HS2). Each country looked at the scenarios for their country and checked if they were broadly in agreement.  Germany identified an additional scenario (HS2) which varied the DIP for Dutch, German and Danish Waters, but does not affect UK waters.</li>
+
+<li>Multiple models were run for the HS1 and HS2 scenarios for 1900</li>
+
+<li>The models were also run for a Current Status (CS) period 2009 -2014. Model information was extracted at the assessment unit scale.</li>
+
+<li>For each assessment unit, the CS period runs for the models were compared with <em>in situ</em> observations and the satellite chlorophyll product from COMPEAT. It used the output from COMPEAT at the assessment unit scale.
+
+This produces a weighting factor where models that represent the observations well contribute more highly than those which represent the observations poorly. This weighting is used to apply to all the models in the historic scenario, to produce a weighted ensemble of the reference condition , for both HS1 and HS2.
+
+The weighted historic scenario model produces the reference value (called BEST in COMPEAT) which defines high status.</li>
 
 
-2  Mutliple models where run for the HS1 and HS2  
+<li>The acceptable deviation from the reference is defined as 50%,  this sets the good/moderate threshold boundary. E.g. DIN for Atlantic the reference value (BEST) is 10 uM and the eutrophication threshold is 15 uM.</li>
+</ol>
 
-3. The models were also run for a Current Status period 2009 -2014. MOdel information extracted at the assessment region scale.
-4. For each assessment region,  the model CS period runs for  models were compared with insitu observations and the satellite insitu product from Compeat. It used the output from COMPEAT at the assessment unit scale. 
+### Relative method
 
-This produces a weighting factor where models that represent the observations well contribute more highly than those which represent the observations poorly.  This wieghting is used to apply to all the models in the historic scenario, to produce a wieghted ensemble of the reference condition , for both HS1 and HS2. 
+The Relative method is an alternative method for calculating assessment thresholds. It works by using the percentage reduction between the model historic runs and the current status run and then applying that to the observations in the current status run to obtain a reference value. The acceptable deviation is then added to get the eutrophication threshold.  This method is very reliant on having good quality data. 
 
-This produces the BEST value – as COMPEAT uses it.  Defines the top end of HIGH status.
 
-The acceptable deviation is defined as 50%  this sets the good/moderate threshold.     e.g. DIN for Altantic Best is 10 threshold is 15.
-
-Convince people they can trust the results.  - Use relative method to gain confidence in results.  
-
-The Relative method works by using the % reduction between the model historic runs and the current status run and then applying that to the observations in the current status run . Then multiple by the acceptable deviation.  It is reliant on having good quality data. 
-
-Hierarchy – Use threshold weighted ensemble, relative method, some other value. 
-
+The maps below present the HS1 thresholds. The UK ESG needs to agree where we can accept these and where they are not acceptable. In these cases we should in the first instance look at the relative method thresholds.
 
 
 
@@ -235,7 +236,7 @@ sync(m2, m3, m1, ncol = 3, sync.cursor = F)
 
 ```
 
-Any points of discussion.
+Any points of discussion. Table of thresholds. Relative method thresholds for plume areas.
 
 The map below shows the thresholds used in COMP3, for comparison. As COMP3 thresholds were based on salinity, the new assessment areas have been classified by salinity to match these and show the appropriate threshold. (think maybe this map not necessary, could be a table, the difference one is more useful)
 
