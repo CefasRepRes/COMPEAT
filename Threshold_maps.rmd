@@ -232,6 +232,9 @@ m3 <- leaflet(COMP4_areas) %>%
 
 sync(m2, m3, m1, ncol = 3, sync.cursor = F)
 
+UK_areas <- COMP4_areas_COMP3_thres2[!is.na(COMP4_areas_COMP3_thres2$COMP3_CPHL),]$ID
+kable(thres[thres$ID %in% UK_areas, c(1:3, 6:8)])
+
 #Doxy - Don't need map, it is 6 mg/l everywhere.
 
 ```
