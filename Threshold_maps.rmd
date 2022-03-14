@@ -91,13 +91,13 @@ During the EUNOSAT project new "ecologically coherent" assessment areas were dev
 
 
 ```{r assessment areas}
-COMP4_areas <- sf::st_read("https://raw.githubusercontent.com/ices-tools-prod/COMPEAT/master/assessment_areas/COMP4_assessment_areas.csv",quiet = T) %>%
+COMP4_areas <- sf::st_read("https://raw.githubusercontent.com/ices-tools-prod/COMPEAT/master/assessment_areas/COMP4_assessment_areas.csv", quiet = T) %>%
   st_set_crs(4326)
 #COMP4_areas <- sf::st_read("assessment_areas/COMP4_assessment_areas.csv") %>% st_set_crs(4326)
 #Map of new assessment areas
 leaflet(COMP4_areas) %>%
   addTiles() %>%
-  addPolygons(color = "black", fillOpacity = 0, weight = 1, label = ~COMP4_areas$ID, popup = COMP4_areas$Area_Name_) %>% # popups not quite working properly
+  addPolygons(color = "black", fillOpacity = 0, weight = 1, label = paste0(COMP4_areas$ID, ": ", COMP4_areas$Area_Name_), popup = COMP4_areas$Area_Name_) %>% # popups not quite working properly
   setView(-0,55,zoom = 5)
 
 #include more detailed map of plume areas explaining how WFD areas were incorporated.
