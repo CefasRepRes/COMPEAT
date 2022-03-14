@@ -431,4 +431,35 @@ cnfidence rating of the individual assessment parameters will be applied to indi
 
 Perhaps for another document, include map of all data currently included in the assessment
 
-## Assessment results?
+## Assessment results
+
+```{r assessment results}
+#Load results
+
+# Write results
+wk3 <- read.table("Output_chl_weighted/2015-2020-HS1/Annual_Indicator.csv", sep = ",", header = T)
+wk5 <- read.table("Output_chl_weighted/2015-2020-HS1/Assessment_Indicator.csv", sep = ",", header = T)
+wk9 <- read.table("Output_chl_weighted/2015-2020-HS1/Assessment.csv", sep = ",", header = T)
+
+assessmentPeriod <- "2015-2020" # COMP4
+
+# Create plots
+EQRS_Class_colors <- c("#3BB300", "#99FF66", "#FFCABF", "#FF8066", "#FF0000")
+EQRS_Class_limits <- c("High", "Good", "Moderate", "Poor", "Bad")
+EQRS_Class_labels <- c(">= 0.8 - 1.0 (High)", ">= 0.6 - 0.8 (Good)", ">= 0.4 - 0.6 (Moderate)", ">= 0.2 - 0.4 (Poor)", ">= 0.0 - 0.2 (Bad)")
+
+C_Class_colors <- c("#3BB300", "#FFCABF", "#FF0000")
+C_Class_limits <- c("High", "Moderate", "Low")
+C_Class_labels <- c(">= 75 % (High)", "50 - 74 % (Moderate)", "< 50 % (Low)")
+
+# Assessment map Status + Confidence
+wk <- merge(COMP4_areas, wk9, all.x = TRUE, by.x = "ID", by.y = "Code")
+
+# Status maps
+ggplot(wk) +
+  ggtitle(label = paste0("Eutrophication Status ", assessmentPeriod)) +
+  geom_sf(aes(fill = EQRS_Class)) +
+  scale_fill_manual(name = "EQRS", values = EQRS_Class_colors, limits = EQRS_Class_limits, labels = EQRS_Class_labels)
+#ggsave(file.path(outputPath, "Assessment_Map_EQRS.png"), width = 12, height = 9, dpi = 300)
+
+```
