@@ -64,7 +64,7 @@ leaflet(COMP3_areas) %>%
 ### COMP3 Thresholds
 
 For the previous UK comprehensive eutrophication assessment (COMP3) thresholds were the same for all assessment areas and only dependent on salinity with a different threshold for "coastal" and "offshore" waters.
-[comment]: # (Maybe add something about the assessment statistics too?)
+[comment]: mention salinity separation and that other countries used different thresholds. Add COMP3 integrated map.
 
 
 
@@ -111,7 +111,7 @@ Plumes were delineated using SPM contours from a 10 year average of remote sensi
 
 ```{r plumes, eval = F}
 
-wfd <- readOGR(dsn = "Shapefiles", layer = "WFD_UK", verbose = F)
+wfd <- readOGR(dsn = "Shapefiles/WFD_UK", layer = "WFD_UK", verbose = F)
 wfd <- spTransform(wfd, CRS("+init=epsg:4326"))
 
 #livbay
@@ -132,7 +132,7 @@ thames_wfd <-crop(wfd, extent(0, 3, 51, 53))
 
 thames <- leaflet(COMP4_areas) %>%
   addTiles() %>%
-  addPolygons(color = "black", fillOpacity = 0, weight = 1, highlight = highlightOptions(weight = 3, bringToFront = TRUE, sendToBack = TRUE)) %>%
+  #addPolygons(color = "black", fillOpacity = 0, weight = 1, highlight = highlightOptions(weight = 3, bringToFront = TRUE, sendToBack = TRUE)) %>%
   addPolygons(data = thames_wfd, color = "green", fillOpacity = 0, weight = 1, label = paste0(wfd$WB_NAME, ";   Adjacent COMP4 assessment area: ", wfd$COMP4_area), highlight = highlightOptions(weight = 3, bringToFront = TRUE, sendToBack = TRUE)) %>% 
   fitBounds(lng1 = bbox(subset(COMP4_areas, ID == "THPM"))[1], lat1 = bbox(subset(COMP4_areas, ID == "THPM"))[2], lng2 = bbox(subset(COMP4_areas, ID == "THPM"))[3], lat2 = bbox(subset(COMP4_areas, ID == "THPM"))[4])
 
@@ -156,9 +156,12 @@ livbay
 
 ## New Assessment thresholds
 
-### Ehype/Eunosat
+### Ehype
 
-During the eunosat project a different approach for determining thresholds was developed. THe E-hype project produced estimates of the DIN and DIP discharge for the major European rivers for the year 1900 corresponding to a pre industrialisation of production of condition. These were used to model "Reference conditions" for nutrients and chlorophyll for the year 1900 using E-hype inputs and 50% was added to these to form the assessment thresholds for nutrients and chlorophyll. This was based on xxx model at Deltares.
+THe E-hype project produced estimates of the DIN and DIP discharge for the major European rivers for the year 1900 corresponding to a pre industrialisation of production of condition.
+
+### Eunosat
+During the eunosat project a different approach for determining thresholds was developed. These were used to model "Reference conditions" for nutrients and chlorophyll for the year 1900 using E-hype inputs and 50% was added to these to form the assessment thresholds for nutrients and chlorophyll. This was based on the Deltares model.
 
 [comment]: # (could add a map here but might be better just to skip to the later versions)
 
@@ -187,7 +190,7 @@ The weighted historic scenario model produces the reference value (called BEST i
 </ol>
 
 
-The maps below present the HS1 thresholds. The UK ESG needs to agree where we can accept these and where they are not acceptable.
+The maps below present the HS1 thresholds, as for UK waters there is no difference between HS1 and HS2 scenarios. The UK ESG needs to agree where we can accept these and where they are not acceptable.
 
 ```{r new thresholds}
 #Thresholds
@@ -408,7 +411,7 @@ Below is a map of WFD areas showing which COMP4 area(s) they align with.
 
 
 ```{r wfd}
-wfd <- readOGR(dsn = "Shapefiles", layer = "WFD_UK", verbose = F)
+wfd <- readOGR(dsn = "Shapefiles/WFD_UK", layer = "WFD_UK", verbose = F)
 wfd <- spTransform(wfd, CRS("+init=epsg:4326"))
 leaflet(wfd) %>%
   addTiles() %>%
@@ -436,7 +439,7 @@ For the chlorophyll results where satellite data is also included, the confidenc
 
 ## Data
 
-Perhaps for another document, include map of all data currently included in the assessment
+Perhaps for another document, include map of all data currently included in the assessment. talk about satellite data product.
 
 ## Assessment results
 
