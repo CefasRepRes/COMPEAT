@@ -14,6 +14,8 @@ library(rgdal)
 library(knitr)
 library(raster)
 library(cmocean)
+library(ggplot2)
+library(plotly)
 knitr::opts_chunk$set(echo = FALSE, warning = FALSE, message = FALSE)
 ```
 
@@ -189,7 +191,7 @@ The weighted historic scenario model produces the reference value (called BEST i
 The Relative method is an alternative method for calculating assessment thresholds. It works by using the percentage reduction between the model historic runs and the current status run and then applying that to the observations in the current status run to obtain a reference value. The acceptable deviation is then added to get the eutrophication threshold.  This method is very reliant on having good quality data. 
 
 
-The maps below present the HS1 thresholds. The UK ESG needs to agree where we can accept these and where they are not acceptable. In these cases we should in the first instance look at the relative method thresholds.
+The maps below present the HS1 thresholds. The UK ESG needs to agree where we can accept these and where they are not acceptable. In cases where the HS1 thresholds we should in the first instance look at the relative method thresholds.
 
 
 
@@ -232,14 +234,47 @@ m3 <- leaflet(COMP4_areas) %>%
 
 sync(m2, m3, m1, ncol = 3, sync.cursor = F)
 
-UK_areas <- COMP4_areas_COMP3_thres2[!is.na(COMP4_areas_COMP3_thres2$COMP3_CPHL),]$ID
-kable(thres[thres$ID %in% UK_areas, c(1:3, 6:8)])
+
 
 #Doxy - Don't need map, it is 6 mg/l everywhere.
 
 ```
 
-Any points of discussion. Table of thresholds. Relative method thresholds for plume areas.
+This table shows the HS1 thresholds for all assessment areas relevant to the UK.
+```{r thresholds table}
+COMP4_areas_COMP3_thres <- read.table("Shapefiles/COMP4_areas_COMP3_thres.csv", sep = ",", header = T)
+UK_areas <- COMP4_areas_COMP3_thres[!is.na(COMP4_areas_COMP3_thres$COMP3_CPHL),]$ID
+kable(thres[thres$ID %in% UK_areas, c(1:3, 6:8)])
+```
+
+The relative method produces thresholds that are in most cases similar to the HS1 thresholds but sometimes disagree.
+
+```{r relative method}
+relmeth_thres <-read.table("Shapefiles/rel_method_thres.csv", sep = ",", header = T)
+thres_methods2<- merge(thres[c(1:3,7)], relmeth_thres, by = "ID")
+names(thres_methods2) <- gsub(x = names(thres_methods2), pattern = "x", replacement = "HS1")  
+names(thres_methods2) <- gsub(x = names(thres_methods2), pattern = "y", replacement = "rel.method") 
+
+thres_methods2 <- thres_methods2 %>% 
+  filter(!is.na(thres_methods2$DIN.rel.method))
+# p <- ggplot(thres_methods2, aes(x = DIN.rel.method, y = DIN.HS1)) +
+#   geom_point(color = "blue") +
+#   #geom_text(label = thres_methods2$ID, hjust=0, vjust=0) +
+#   geom_abline()
+
+#ggplotly(p)
+
+lm <- lm(DIN.HS1 ~ DIN.rel.method, data = thres_methods2)
+fig <- plot_ly(data = thres_methods2, x = ~DIN.rel.method, y = ~DIN.HS1, text= thres_methods2$ID) %>% add_markers(y = ~DIN.HS1) %>%  add_lines(x = ~DIN.rel.method, y = fitted(lm)) %>%
+  layout(showlegend = F)
+fig
+
+```
+For the some UK assessment areas, the thresholds from HS1 and the relative method differ by more than 20%. These include Thames plume, Humber plume and Northern North Sea for Chlorophyll, Liverpool Bay for DIN, and Southern North Sea for DIP. In these cases we may want to consider using the thresholds derived from the relative method instead.
+```{r thres comparison}
+plume_thres_methods2 <- thres_methods2[thres_methods2$ID %in% c("HPM", "LBPM", "THPM", "SNS", "NNS"),]
+kable(plume_thres_methods2[c(1,2,5,3,6,4,7)])
+```
 
 The map below shows the thresholds used in COMP3, for comparison. As COMP3 thresholds were based on salinity, the new assessment areas have been classified by salinity to match these and show the appropriate threshold. (think maybe this map not necessary, could be a table, the difference one is more useful)
 
