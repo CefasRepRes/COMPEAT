@@ -16,6 +16,7 @@ library(raster)
 library(cmocean)
 library(ggplot2)
 library(plotly)
+library(oce)
 knitr::opts_chunk$set(echo = FALSE, warning = FALSE, message = FALSE)
 ```
 
@@ -469,10 +470,52 @@ C_Class_labels <- c(">= 75 % (High)", "50 - 74 % (Moderate)", "< 50 % (Low)")
 wk <- merge(COMP4_areas, wk9, all.x = TRUE, by.x = "ID", by.y = "Code")
 
 # Status maps
-ggplot(wk) +
-  ggtitle(label = paste0("Eutrophication Status ", assessmentPeriod)) +
-  geom_sf(aes(fill = EQRS_Class)) +
-  scale_fill_manual(name = "EQRS", values = EQRS_Class_colors, limits = EQRS_Class_limits, labels = EQRS_Class_labels)
+# ggplot(wk) +
+#   ggtitle(label = paste0("Eutrophication Status ", assessmentPeriod)) +
+#   geom_sf(aes(fill = EQRS_Class)) +
+#   scale_fill_manual(name = "EQRS", values = EQRS_Class_colors, limits = EQRS_Class_limits, labels = EQRS_Class_labels)
 #ggsave(file.path(outputPath, "Assessment_Map_EQRS.png"), width = 12, height = 9, dpi = 300)
 
+pal <- colorNumeric(palette = oceColorsChlorophyll(255), domain = c(0,20), na.color = "#00000000")
+EQRSpal <- colorFactor(EQRS_Class_colors, levels = c("High", "Good", "Moderate", "Poor", "Bad"), na.color = "#00000000")
+
+leaflet(wk) %>%
+  addTiles() %>%
+  #addPolygons(data = wk, fillColor = ~pal(chl_mean), color = "black", fillOpacity = 1, weight = 1, group = "Eutrophication State", popup = paste0("Mean chl = ", as.character(round(wk$chl_mean,2)), ";  No. data points = ", as.character(wk$chl_count))) %>%
+  addPolygons(data = wk, fillColor = ~EQRSpal(EQRS_Class), color = "black", fillOpacity = 1, weight = 1, group = "EQRS", popup = wk$EQRS_Class) %>%
+  #addLegend("bottomright", pal = pal, values = c(0,20), title = paste0("Chl (mg/l)"), group = "Eutrophication State") %>%
+        #addLegend("bottomright", pal = EQRSpal, values = ~EQRS_Class, title = "EQRS Class")
+  addLegend("bottomright", colors = EQRS_Class_colors, labels = EQRS_Class_labels, title = "EQRS Class", group = "EQRS") %>% # this is a nasty manual fix to get the legend values drawn in the correct order
+  #addLayersControl(overlayGroups = c("Eutrophication State", "EQRS"), position = c("bottomleft"), options = layersControlOptions(collapsed = FALSE, autoZIndex = TRUE)) %>%
+  #hideGroup("EQRS") %>% 
+        setView(3,55, zoom = 5)
+      
+  
+
+# output$assessment_areas <- renderLeaflet({
+#       EQRS_Class_colors <- c("#3BB300", "#99FF66", "#FFCABF", "#FF8066", "#FF0000")
+#       EQRS_Class_limits <- c("High", "Good", "Moderate", "Poor", "Bad")
+#       EQRS_Class_labels <- c(">= 0.8 - 1.0 (High)", ">= 0.6 - 0.8 (Good)", ">= 0.4 - 0.6 (Moderate)", ">= 0.2 - 0.4 (Poor)", ">= 0.0 - 0.2 (Bad)")
+# 
+#       COMP4_areas_update <- COMP4_areas_scenarios[[input$scenario]][[input$year]]
+#       pal <- colorNumeric(palette = oceColorsChlorophyll(255), domain = c(input$range[1],input$range[2]), na.color = "#00000000")
+#       EQRSpal <- colorFactor(EQRS_Class_colors, levels = c("High", "Good", "Moderate", "Poor", "Bad"), na.color = "#00000000")
+#       
+#       map = leaflet(COMP4_areas_update) %>%
+#         addTiles() %>%
+#         clearGroup("Eutrophication State") %>%
+#         addPolygons(data = COMP4_areas_update, fillColor = ~pal(chl_mean), color = "black", fillOpacity = 1, weight = 1, group = "Eutrophication State", popup = paste0("Mean chl = ", as.character(round(COMP4_areas_update$chl_mean,2)), ";  No. data points = ", as.character(COMP4_areas_update$chl_count))) %>%
+#         addPolygons(data = COMP4_areas_update, fillColor = ~EQRSpal(EQRS_Class), color = "black", fillOpacity = 1, weight = 1, group = "EQRS", popup = COMP4_areas_update$EQRS_Class) %>%
+#         addLegend("bottomright", pal = pal, values = c(input$range[1],input$range[2]), title = paste0("Chl (mg/l)"), group = "Eutrophication State") %>%
+#         addLegend("bottomright", pal = EQRSpal, values = ~EQRS_Class, title = "EQRS Class")
+#         #addLegend("bottomright", colors = EQRS_Class_colors, labels = EQRS_Class_labels, title = "EQRS Class", group = "EQRS") %>% # this is a nasty manual fix to get the legend values drawn in the correct order
+#         addLayersControl(
+#           overlayGroups = c("Eutrophication State", "EQRS"), position = c("bottomleft"),
+#           options = layersControlOptions(collapsed = FALSE, autoZIndex = TRUE)
+#         ) %>%
+#         #hideGroup("EQRS") %>% 
+#         setView(3,55, zoom = 5)
+#       
+#       
+#     })
 ```
