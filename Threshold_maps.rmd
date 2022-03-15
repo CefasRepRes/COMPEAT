@@ -80,6 +80,9 @@ kable(thres_COMP3)
 
 Other countries used different thresholds, resulting in a map of eutrophication results which is not coherent with waters changing between problem and non-problem areas
 
+![COMP3 results](Shapefiles/COMP3_results.png)
+
+
 [comment]: # (should we include the results of the previous assessment here?? And that it was a simple pass/fail with confidence assessment)
 
 
@@ -109,8 +112,7 @@ leaflet(COMP4_areas) %>%
 Additionally some river plume assessment areas were added. For the UK this includes the Thames, the Humber and Liverpool Bay.
 Plumes were delineated using SPM contours from a 10 year average of remote sensing data. For the Thames and Liverpool Bay some outer WFD assessment areas were included in the plume polygon.
 
-### Liverpool Bay plume
-```{r livbay, eval = T, out.width='50%'}
+```{r plumes, eval = T}
 
 wfd <- sf::st_read("Shapefiles/WFD_UK/WFD_UK.shp", quiet = T)
 wfd <- st_transform(wfd, CRS("+init=epsg:4326"))
@@ -126,10 +128,7 @@ livbay <- leaflet(COMP4_areas) %>%
   addPolygons(color = "black", fillOpacity = 0, weight = 1, highlight = highlightOptions(weight = 3, bringToFront = TRUE, sendToBack = TRUE)) %>%
   addPolygons(data = livbay_wfd, color = "green", fillOpacity = 0, weight = 1, label = paste0(wfd$WB_NAME, ";   Adjacent COMP4 assessment area: ", wfd$COMP4_area), highlight = highlightOptions(weight = 3, bringToFront = TRUE, sendToBack = TRUE)) %>% 
   fitBounds(lng1 = bbox(subset(sf:::as_Spatial(st_zm(COMP4_areas)), ID == "LBPM"))[1], lat1 = bbox(subset(sf:::as_Spatial(st_zm(COMP4_areas)), ID == "LBPM"))[2], lng2 = bbox(subset(sf:::as_Spatial(st_zm(COMP4_areas)), ID == "LBPM"))[3], lat2 = bbox(subset(sf:::as_Spatial(st_zm(COMP4_areas)), ID == "LBPM"))[4])
-livbay
-```
-### Thames plume
-```{r thames, eval = T, out.width='50%'}
+
 
 #thames
 thames_wfd <- st_crop(wfd, xmin = 0, ymin = 51, xmax = 3, ymax = 53)
@@ -139,10 +138,7 @@ thames <- leaflet(COMP4_areas) %>%
   #addPolygons(color = "black", fillOpacity = 0, weight = 1, highlight = highlightOptions(weight = 3, bringToFront = TRUE, sendToBack = TRUE)) %>%
   addPolygons(data = thames_wfd, color = "green", fillOpacity = 0, weight = 1, label = paste0(wfd$WB_NAME, ";   Adjacent COMP4 assessment area: ", wfd$COMP4_area), highlight = highlightOptions(weight = 3, bringToFront = TRUE, sendToBack = TRUE)) %>% 
   fitBounds(lng1 = bbox(subset(sf:::as_Spatial(st_zm(COMP4_areas)), ID == "THPM"))[1], lat1 = bbox(subset(sf:::as_Spatial(st_zm(COMP4_areas)), ID == "THPM"))[2], lng2 = bbox(subset(sf:::as_Spatial(st_zm(COMP4_areas)), ID == "THPM"))[3], lat2 = bbox(subset(sf:::as_Spatial(st_zm(COMP4_areas)), ID == "THPM"))[4])
-thames
-```
-### Humber plume
-```{r humber, eval = T, out.width='50%'}
+
 
 #humber
 humber_wfd <- st_crop(wfd, xmin = -1, ymin = 52.5, xmax = 2, ymax = 54.5)
@@ -154,10 +150,7 @@ humber <- leaflet(COMP4_areas) %>%
   fitBounds(lng1 = bbox(subset(sf:::as_Spatial(st_zm(COMP4_areas)), ID == "HPM"))[1], lat1 = bbox(subset(sf:::as_Spatial(st_zm(COMP4_areas)), ID == "HPM"))[2], lng2 = bbox(subset(sf:::as_Spatial(st_zm(COMP4_areas)), ID == "HPM"))[3], lat2 = bbox(subset(sf:::as_Spatial(st_zm(COMP4_areas)), ID == "HPM"))[4])
 
 
-humber
-
-
-#latticeview(thames, humber, livbay, ncol = 3, sync.cursor = F) # figure out if it is possible to add space between them
+latticeview(thames, humber, livbay, ncol = 3, sync.cursor = F) # figure out if it is possible to add space between them
 ```
 
 
@@ -450,6 +443,8 @@ For the chlorophyll results where satellite data is also included, the confidenc
 Perhaps for another document, include map of all data currently included in the assessment. talk about satellite data product.
 
 ## Assessment results
+
+Below are the assessment results as created by the COMPEAT tool using the HS1 thresholds.
 
 ```{r assessment results}
 #Load results
